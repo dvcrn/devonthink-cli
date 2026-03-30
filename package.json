@@ -1,6 +1,6 @@
 {
 	"name": "devonthink",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "CLI for DEVONthink tools distilled from mcp-server-devonthink",
 	"author": "David Mohl <git@d.sh>",
 	"license": "GPL-3.0-or-later",

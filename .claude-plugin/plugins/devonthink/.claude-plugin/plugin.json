@@ -1,7 +1,7 @@
 {
 	"name": "devonthink",
 	"description": "Operate the DEVONthink CLI for databases, records, tags, search, and AI-powered document workflows.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"author": {
 		"name": "dvcrn",
 		"url": "https://github.com/dvcrn"
