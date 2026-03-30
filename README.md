@@ -32,7 +32,7 @@ For Claude Code, the equivalent commands are:
 
 ```bash
 claude plugins marketplace add dvcrn/devonthink-cli
-claude plugins install devonthink@dvcrn-devonthink-cli --scope user
+claude plugins install devonthink@devonthink-cli --scope user
 ```
 
 For `npx skills`, run:
