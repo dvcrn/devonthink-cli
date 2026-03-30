@@ -31,6 +31,9 @@ type RenameRecordInput = z.infer<typeof RenameRecordSchema>;
 interface RenameRecordResult {
 	success: boolean;
 	error?: string;
+	uuid?: string;
+	oldName?: string;
+	newName?: string;
 }
 
 const renameRecord = async (
@@ -76,6 +79,7 @@ const renameRecord = async (
         }
         
         const record = lookupResult.record;
+        const oldName = record.name();
         
         // Verify database if specified
         const pDatabaseName = ${databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"};
@@ -89,7 +93,10 @@ const renameRecord = async (
         record.name = ${newName ? `"${escapeStringForJXA(newName)}"` : "null"};
         
         return JSON.stringify({
-          success: true
+          success: true,
+          uuid: record.uuid(),
+          oldName: oldName,
+          newName: record.name()
         });
       } catch (error) {
         return JSON.stringify({

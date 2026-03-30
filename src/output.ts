@@ -28,6 +28,11 @@ export function printToolResultHuman(result: unknown): void {
 		return;
 	}
 
+	if (isRenameResult(result)) {
+		console.log(`Renamed: ${result.oldName} -> ${result.newName}`);
+		return;
+	}
+
 	printObject(result as Record<string, unknown>, 0);
 }
 
@@ -233,6 +238,18 @@ function describeSchemaType(schema: JsonSchema): string {
 	}
 
 	return schema.type ?? "unknown";
+}
+
+function isRenameResult(
+	value: unknown,
+): value is { success: true; oldName: string; newName: string } {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		(value as { success?: unknown }).success === true &&
+		typeof (value as { oldName?: unknown }).oldName === "string" &&
+		typeof (value as { newName?: unknown }).newName === "string"
+	);
 }
 
 function isPlainObject(value: unknown): boolean {

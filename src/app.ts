@@ -133,16 +133,16 @@ export async function runCli(
 }
 
 function registerToolCommand(cli: Argv, tool: Tool): Argv {
-	const positionalProperty = getPositionalProperty(tool);
-	const commandName = positionalProperty
-		? `${tool.name} [${toKebabCase(positionalProperty)}]`
+	const positionalProperties = getPositionalProperties(tool);
+	const commandName = positionalProperties.length > 0
+		? `${tool.name} ${positionalProperties.map((property) => `[${toKebabCase(property)}]`).join(" ")}`
 		: tool.name;
 
 	return cli.command(
 		commandName,
 		firstLine(tool.description ?? ""),
 		(yargsInstance) =>
-			configureToolCommand(yargsInstance, tool, positionalProperty),
+			configureToolCommand(yargsInstance, tool, positionalProperties),
 		async (argv) => {
 			const input = buildToolInput(tool, argv as Record<string, unknown>);
 			const result = await runTool(tool.name, input);
@@ -169,7 +169,7 @@ function registerToolCommand(cli: Argv, tool: Tool): Argv {
 function configureToolCommand(
 	yargsInstance: Argv,
 	tool: Tool,
-	positionalProperty?: string,
+	positionalProperties: string[] = [],
 ): Argv {
 	const schema = tool.inputSchema as JsonSchema;
 	const properties = schema.properties ?? {};
@@ -180,7 +180,7 @@ function configureToolCommand(
 		type: "string",
 	});
 
-	if (positionalProperty) {
+	for (const positionalProperty of positionalProperties) {
 		const propertySchema = properties[positionalProperty];
 		if (propertySchema) {
 			configured = configured.positional(toKebabCase(positionalProperty), {
@@ -204,7 +204,7 @@ function configureToolCommand(
 				: undefined,
 			default: propertySchema.default,
 			demandOption:
-				required.has(propertyName) && propertyName !== positionalProperty,
+				required.has(propertyName) && !positionalProperties.includes(propertyName),
 			describe: propertySchema.description ?? `Value for ${propertyName}`,
 			type: getYargsType(propertySchema),
 			coerce: (value: unknown) => coerceOptionValue(propertySchema, value),
@@ -363,7 +363,16 @@ function coerceOptionValue(schema: JsonSchema, value: unknown): unknown {
 	return value;
 }
 
-function getPositionalProperty(tool: Tool): string | undefined {
+function getPositionalProperties(tool: Tool): string[] {
+	if (tool.name === "rename_record") {
+		return ["uuid", "newName"];
+	}
+
+	const positionalProperty = getPrimaryPositionalProperty(tool);
+	return positionalProperty ? [positionalProperty] : [];
+}
+
+function getPrimaryPositionalProperty(tool: Tool): string | undefined {
 	const schema = tool.inputSchema as JsonSchema;
 	const properties = schema.properties ?? {};
 	const required = new Set(schema.required ?? []);
