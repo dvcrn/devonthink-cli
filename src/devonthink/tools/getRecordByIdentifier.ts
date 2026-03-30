@@ -17,7 +17,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const GetRecordByIdentifierSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record (defaults to the currently selected record when no identifier is provided)"),
 		id: z
 			.number()
 			.optional()
@@ -33,17 +36,7 @@ const GetRecordByIdentifierSchema = z
 				"A x-devonthink-item:// URL. Works for all record types including imported emails which use non-UUID identifiers.",
 			),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.referenceURL !== undefined ||
-			data.uuid !== undefined ||
-			(data.id !== undefined && data.databaseName !== undefined),
-		{
-			message:
-				"Either referenceURL alone, UUID alone, or ID with databaseName must be provided",
-		},
-	);
+	.strict();
 
 type GetRecordByIdentifierInput = z.infer<typeof GetRecordByIdentifierSchema>;
 
@@ -163,42 +156,29 @@ const getRecordByIdentifier = async (
 
           targetDatabase = targetRecord.database();
 
-        } else if (${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"}) {
-          // UUID lookup - globally unique
+        } else {
           const lookupOptions = {};
           lookupOptions["uuid"] = ${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"};
 
-          lookupResult = getRecord(theApp, lookupOptions);
+          if (${formatValueForJXA(id)} !== null) {
+            targetDatabase = getDatabase(theApp, ${databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"});
+            lookupOptions["id"] = ${formatValueForJXA(id)};
+            lookupOptions["database"] = targetDatabase;
+          }
+
+          lookupResult = getRecordOrSelected(theApp, lookupOptions);
 
           if (!lookupResult.record) {
             return JSON.stringify({
               success: false,
-              error: "Record with UUID " + (${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"} || "unknown") + " not found"
+              error: lookupResult.error || "Record not found"
             });
           }
 
           targetRecord = lookupResult.record;
-          // Get the database of the record
-          targetDatabase = targetRecord.database();
-
-        } else if (${formatValueForJXA(id)} !== null && ${databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"}) {
-          // ID + Database lookup
-          targetDatabase = getDatabase(theApp, ${databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"});
-
-          const lookupOptions = {};
-          lookupOptions["id"] = ${formatValueForJXA(id)};
-          lookupOptions["database"] = targetDatabase;
-
-          lookupResult = getRecord(theApp, lookupOptions);
-
-          if (!lookupResult.record) {
-            return JSON.stringify({
-              success: false,
-              error: "Record with ID " + ${formatValueForJXA(id)} + " not found in database '" + (${databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"} || "unknown") + "'"
-            });
+          if (!targetDatabase) {
+            targetDatabase = targetRecord.database();
           }
-
-          targetRecord = lookupResult.record;
         }
 
         // Extract record properties

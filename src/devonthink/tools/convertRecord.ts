@@ -18,7 +18,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const ConvertRecordSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record to convert"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to convert (defaults to the currently selected record)"),
 		recordId: z.number().optional().describe("ID of the record to convert"),
 		recordPath: z
 			.string()
@@ -50,16 +53,7 @@ const ConvertRecordSchema = z
 			.optional()
 			.describe("Database name containing the source record (optional)"),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordPath !== undefined,
-		{
-			message: "Either uuid, recordId, or recordPath must be provided",
-		},
-	);
+	.strict();
 
 type ConvertRecordInput = z.infer<typeof ConvertRecordSchema>;
 
@@ -136,7 +130,7 @@ const convertRecord = async (
         lookupOptions["database"] = sourceDatabase;
         
         // Find the source record
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           // Build detailed error message

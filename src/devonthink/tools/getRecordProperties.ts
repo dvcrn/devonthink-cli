@@ -17,7 +17,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const GetRecordPropertiesSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record (defaults to the currently selected record)"),
 		recordId: z
 			.number()
 			.optional()
@@ -33,16 +36,7 @@ const GetRecordPropertiesSchema = z
 			.optional()
 			.describe("Database to get the record properties from (optional)"),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordPath !== undefined,
-		{
-			message: "Either uuid, recordId, or recordPath must be provided",
-		},
-	);
+	.strict();
 
 type GetRecordPropertiesInput = z.infer<typeof GetRecordPropertiesSchema>;
 
@@ -121,7 +115,7 @@ const getRecordProperties = async (
         };
 
         // Use the unified lookup function
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
 
         if (!lookupResult.record) {
           // Build detailed error message

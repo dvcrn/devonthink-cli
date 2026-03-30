@@ -160,6 +160,47 @@ function getRecord(theApp, options) {
   return errorResult;
 }`;
 
+export const getSingleSelectedRecordHelper = `
+function getSingleSelectedRecord(theApp) {
+  try {
+    const selection = theApp.selection();
+    if (!selection || selection.length === 0) {
+      const result = {};
+      result["record"] = null;
+      result["error"] = "No record selected in DEVONthink";
+      return result;
+    }
+    if (selection.length > 1) {
+      const result = {};
+      result["record"] = null;
+      result["error"] = "Multiple records selected in DEVONthink; this command requires exactly one selected record";
+      return result;
+    }
+    const result = {};
+    result["record"] = selection[0];
+    result["method"] = "selection";
+    return result;
+  } catch (e) {
+    const result = {};
+    result["record"] = null;
+    result["error"] = "Failed to inspect the current DEVONthink selection: " + e.toString();
+    return result;
+  }
+}`;
+
+export const getRecordOrSelectedHelper = `
+function getRecordOrSelected(theApp, options) {
+  if (options && (
+    options.uuid ||
+    options.path ||
+    options.name ||
+    (options.id !== null && options.id !== undefined)
+  )) {
+    return getRecord(theApp, options);
+  }
+  return getSingleSelectedRecord(theApp);
+}`;
+
 /**
  * Helper to validate if a record is a group
  */
@@ -290,6 +331,8 @@ export function getRecordLookupHelpers(): string {
     ${lookupByPathHelper}
     ${lookupByNameHelper}
     ${getRecordHelper}
+    ${getSingleSelectedRecordHelper}
+    ${getRecordOrSelectedHelper}
   `;
 }
 

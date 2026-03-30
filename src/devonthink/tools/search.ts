@@ -196,10 +196,13 @@ const search = async (input: SearchInput): Promise<SearchResult> => {
 
 
         let searchScope;
-        let targetDatabase;
+        let targetDatabase = null;
         
-        // Get target database
-        targetDatabase = getDatabase(theApp, pDatabaseName);
+        // Get target database only when explicitly requested.
+        // Without a databaseName, search should span all open databases.
+        if (pDatabaseName) {
+          targetDatabase = getDatabase(theApp, pDatabaseName);
+        }
         
         // Determine search scope
         if (pUseCurrentGroup) {

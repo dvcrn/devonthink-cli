@@ -17,7 +17,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const CompareSchema = z
 	.object({
-		recordUuid: z.string().describe("Primary record UUID for comparison"),
+		recordUuid: z
+			.string()
+			.optional()
+			.describe("Primary record UUID for comparison (defaults to the currently selected record)"),
 		compareWithUuid: z
 			.string()
 			.optional()
@@ -82,7 +85,7 @@ const compare = async (input: CompareInput): Promise<CompareResult> => {
 	const { recordUuid, compareWithUuid, databaseName, comparison } = input;
 
 	// Validate string inputs
-	if (!isJXASafeString(recordUuid)) {
+	if (recordUuid && !isJXASafeString(recordUuid)) {
 		return { success: false, error: "Record UUID contains invalid characters" };
 	}
 	if (compareWithUuid && !isJXASafeString(compareWithUuid)) {
@@ -122,12 +125,12 @@ const compare = async (input: CompareInput): Promise<CompareResult> => {
           uuid: ${recordUuid ? `"${escapeStringForJXA(recordUuid)}"` : "null"}
         };
         
-        const primaryLookupResult = getRecord(theApp, primaryLookupOptions);
+        const primaryLookupResult = getRecordOrSelected(theApp, primaryLookupOptions);
         
         if (!primaryLookupResult.record) {
           return JSON.stringify({
             success: false,
-            error: "Primary record not found with UUID: " + (${recordUuid ? `"${escapeStringForJXA(recordUuid)}"` : "null"} || "unknown")
+            error: primaryLookupResult.error || "Primary record not found"
           });
         }
         

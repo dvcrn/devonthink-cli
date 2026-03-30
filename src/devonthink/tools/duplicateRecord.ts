@@ -18,7 +18,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const DuplicateRecordSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record to duplicate"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to duplicate (defaults to the currently selected record)"),
 		recordId: z.number().optional().describe("ID of the record to duplicate"),
 		recordPath: z
 			.string()
@@ -34,16 +37,7 @@ const DuplicateRecordSchema = z
 				"Database containing the source record (optional, defaults to current)",
 			),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordPath !== undefined,
-		{
-			message: "Either uuid, recordId, or recordPath must be provided",
-		},
-	);
+	.strict();
 
 type DuplicateRecordInput = z.infer<typeof DuplicateRecordSchema>;
 
@@ -119,7 +113,7 @@ const duplicateRecord = async (
         lookupOptions["database"] = sourceDatabase;
         
         // Find the source record
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           // Build detailed error message

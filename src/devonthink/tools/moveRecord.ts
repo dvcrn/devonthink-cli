@@ -18,7 +18,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const MoveRecordSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record to move"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to move (defaults to the currently selected record)"),
 		recordId: z.number().optional().describe("ID of the record to move"),
 		recordName: z.string().optional().describe("Name of the record to move"),
 		recordPath: z.string().optional().describe("Path of the record to move"),
@@ -31,18 +34,7 @@ const MoveRecordSchema = z
 			.optional()
 			.describe("Database to move the record in (optional)"),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordName !== undefined ||
-			data.recordPath !== undefined,
-		{
-			message:
-				"Either uuid, recordId, recordName, or recordPath must be provided",
-		},
-	);
+	.strict();
 
 type MoveRecordInput = z.infer<typeof MoveRecordSchema>;
 
@@ -107,7 +99,7 @@ const moveRecord = async (
         };
         
         // Find the record to move
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           let errorDetails = lookupResult.error || "Record not found";

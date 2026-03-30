@@ -14,7 +14,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const GetRecordContentSchema = z
 	.object({
-		uuid: z.string().describe("UUID of the record to get content from"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to get content from (defaults to the currently selected record)"),
 		databaseName: z
 			.string()
 			.optional()
@@ -36,7 +39,7 @@ const getRecordContent = async (
 	const { uuid, databaseName } = input;
 
 	// Validate string inputs
-	if (!isJXASafeString(uuid)) {
+	if (uuid && !isJXASafeString(uuid)) {
 		return { success: false, error: "UUID contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
@@ -60,12 +63,12 @@ const getRecordContent = async (
           uuid: ${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"}
         };
         
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           return JSON.stringify({
             success: false,
-            error: "Record with UUID " + (${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"} || "unknown") + " not found"
+            error: lookupResult.error || "Record not found"
           });
         }
         

@@ -17,7 +17,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const DeleteRecordSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record to delete"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to delete (defaults to the currently selected record)"),
 		recordId: z.number().optional().describe("ID of the record to delete"),
 		recordPath: z
 			.string()
@@ -32,16 +35,7 @@ const DeleteRecordSchema = z
 				"Database to delete the record from (optional, defaults to current)",
 			),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordPath !== undefined,
-		{
-			message: "Either uuid, recordId, or recordPath must be provided",
-		},
-	);
+	.strict();
 
 type DeleteRecordInput = z.infer<typeof DeleteRecordSchema>;
 
@@ -87,7 +81,7 @@ const deleteRecord = async (
         };
         
         // Use the unified lookup function
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           // Build detailed error message

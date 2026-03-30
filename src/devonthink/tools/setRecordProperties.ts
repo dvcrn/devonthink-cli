@@ -13,7 +13,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const SetRecordPropertiesSchema = z
 	.object({
-		uuid: z.string().optional().describe("UUID of the record to update"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to update (defaults to the currently selected record)"),
 		recordId: z.number().optional().describe("ID of the record to update"),
 		recordPath: z
 			.string()
@@ -45,14 +48,7 @@ const SetRecordPropertiesSchema = z
 			.describe("Only applicable to groups"),
 		excludeFromWikiLinking: z.boolean().optional(),
 	})
-	.strict()
-	.refine(
-		(data) =>
-			data.uuid !== undefined ||
-			data.recordId !== undefined ||
-			data.recordPath !== undefined,
-		{ message: "Either uuid, recordId, or recordPath must be provided" },
-	);
+	.strict();
 
 type SetRecordPropertiesInput = z.infer<typeof SetRecordPropertiesSchema>;
 
@@ -124,7 +120,7 @@ const setRecordProperties = async (
         lookupOptions["database"] = targetDatabase;
 
         // Find the record
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         if (!lookupResult || !lookupResult.record) {
           let errorDetails = lookupResult && lookupResult.error ? lookupResult.error : "Record not found";
           if (${recordId !== undefined ? recordId : "null"}) {

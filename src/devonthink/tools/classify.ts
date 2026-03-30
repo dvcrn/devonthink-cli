@@ -17,7 +17,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const ClassifySchema = z
 	.object({
-		recordUuid: z.string().describe("UUID of the record to classify"),
+		recordUuid: z
+			.string()
+			.optional()
+			.describe("UUID of the record to classify (defaults to the currently selected record)"),
 		databaseName: z
 			.string()
 			.optional()
@@ -51,7 +54,7 @@ const classify = async (input: ClassifyInput): Promise<ClassifyResult> => {
 	const { recordUuid, databaseName, comparison, tags } = input;
 
 	// Validate string inputs
-	if (!isJXASafeString(recordUuid)) {
+	if (recordUuid && !isJXASafeString(recordUuid)) {
 		return { success: false, error: "Record UUID contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
@@ -85,12 +88,12 @@ const classify = async (input: ClassifyInput): Promise<ClassifyResult> => {
           uuid: ${recordUuid ? `"${escapeStringForJXA(recordUuid)}"` : "null"}
         };
         
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           return JSON.stringify({
             success: false,
-            error: "Record not found with UUID: " + (${recordUuid ? `"${escapeStringForJXA(recordUuid)}"` : "null"} || "unknown")
+            error: lookupResult.error || "Record not found"
           });
         }
         

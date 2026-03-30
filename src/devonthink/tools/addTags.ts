@@ -14,7 +14,10 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 
 const AddTagsSchema = z
 	.object({
-		uuid: z.string().describe("Record UUID to add tags to"),
+		uuid: z
+			.string()
+			.optional()
+			.describe("Record UUID to add tags to (defaults to the currently selected record)"),
 		tags: z.array(z.string()).describe("Tags to add"),
 	})
 	.strict();
@@ -30,7 +33,7 @@ const addTags = async (input: AddTagsInput): Promise<AddTagsResult> => {
 	const { uuid, tags } = input;
 
 	// Validate string inputs
-	if (!isJXASafeString(uuid)) {
+	if (uuid && !isJXASafeString(uuid)) {
 		return { success: false, error: "UUID contains invalid characters" };
 	}
 	for (const tag of tags) {
@@ -56,12 +59,12 @@ const addTags = async (input: AddTagsInput): Promise<AddTagsResult> => {
           uuid: ${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"}
         };
         
-        const lookupResult = getRecord(theApp, lookupOptions);
+        const lookupResult = getRecordOrSelected(theApp, lookupOptions);
         
         if (!lookupResult.record) {
           return JSON.stringify({
             success: false,
-            error: "Record with UUID " + (${uuid ? `"${escapeStringForJXA(uuid)}"` : "null"} || "unknown") + " not found"
+            error: lookupResult.error || "Record not found"
           });
         }
         
