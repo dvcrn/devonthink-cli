@@ -30,7 +30,8 @@ interface AIHealthResult {
  */
 export const checkAIHealthTool = createDevonThinkTool({
 	name: "check_ai_health",
-	description: "Check if DEVONthink's AI services are available and working properly.",
+	description:
+		"Check if DEVONthink's AI services are available and working properly.",
 	inputSchema: CheckAIHealthSchema,
 	buildScript: (input, helpers) => {
 		return helpers.wrapInTryCatch(`

@@ -11,7 +11,9 @@ const ListGroupContentSchema = z
 		uuid: z
 			.string()
 			.optional()
-			.describe("UUID of the group to list content from (optional, defaults to root)"),
+			.describe(
+				"UUID of the group to list content from (optional, defaults to root)",
+			),
 		databaseName: z
 			.string()
 			.optional()
@@ -33,7 +35,9 @@ interface ListGroupContentResult {
 	records?: RecordInfo[];
 }
 
-const listGroupContent = async (input: ListGroupContentInput): Promise<ListGroupContentResult> => {
+const listGroupContent = async (
+	input: ListGroupContentInput,
+): Promise<ListGroupContentResult> => {
 	const { uuid, databaseName } = input;
 
 	const getDatabaseJxa = `

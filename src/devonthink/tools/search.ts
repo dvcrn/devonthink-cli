@@ -21,11 +21,16 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 const SearchSchema = z
 	.object({
 		query: z.string().describe("Search query string"),
-		groupUuid: z.string().optional().describe("UUID of the group to search in (optional)"),
+		groupUuid: z
+			.string()
+			.optional()
+			.describe("UUID of the group to search in (optional)"),
 		groupId: z
 			.number()
 			.optional()
-			.describe("ID of the group to search in (optional, requires databaseName)"),
+			.describe(
+				"ID of the group to search in (optional, requires databaseName)",
+			),
 		groupPath: z
 			.string()
 			.optional()
@@ -35,7 +40,9 @@ const SearchSchema = z
 		databaseName: z
 			.string()
 			.optional()
-			.describe("Database name (optional, required when using groupId or groupPath)"),
+			.describe(
+				"Database name (optional, required when using groupId or groupPath)",
+			),
 		useCurrentGroup: z
 			.boolean()
 			.optional()
@@ -65,7 +72,10 @@ const SearchSchema = z
 			.boolean()
 			.optional()
 			.describe("Exclude subgroups from the search (optional)"),
-		limit: z.number().optional().describe("Maximum number of results to return (optional)"),
+		limit: z
+			.number()
+			.optional()
+			.describe("Maximum number of results to return (optional)"),
 	})
 	.strict()
 	.refine(
@@ -79,7 +89,10 @@ const SearchSchema = z
 				return false;
 			}
 			// If useCurrentGroup is true, other group parameters should not be provided
-			if (data.useCurrentGroup && (data.groupUuid || data.groupId || data.groupPath)) {
+			if (
+				data.useCurrentGroup &&
+				(data.groupUuid || data.groupId || data.groupPath)
+			) {
 				return false;
 			}
 			return true;

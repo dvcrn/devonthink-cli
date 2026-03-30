@@ -2,7 +2,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
 import { getRecordLookupHelpers } from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
@@ -12,7 +16,10 @@ const RenameRecordSchema = z
 	.object({
 		uuid: z.string().describe("UUID of the record to rename"),
 		newName: z.string().describe("New name for the record"),
-		databaseName: z.string().optional().describe("Database to rename the record in (optional)"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database to rename the record in (optional)"),
 	})
 	.strict();
 
@@ -23,7 +30,9 @@ interface RenameRecordResult {
 	error?: string;
 }
 
-const renameRecord = async (input: RenameRecordInput): Promise<RenameRecordResult> => {
+const renameRecord = async (
+	input: RenameRecordInput,
+): Promise<RenameRecordResult> => {
 	const { uuid, newName, databaseName } = input;
 
 	// Validate string inputs
@@ -34,7 +43,10 @@ const renameRecord = async (input: RenameRecordInput): Promise<RenameRecordResul
 		return { success: false, error: "New name contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 
 	const script = `

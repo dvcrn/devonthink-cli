@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "devonthink": {
+      "source": "dvcrn/devonthink-cli",
+      "sourceType": "github",
+      "computedHash": "dc2db947844840154ac351ba4230fe9048f02ca0bbbe8350b42d8d1aa0bccce2"
+    }
+  }
+}

@@ -11,17 +11,26 @@ const CreateRecordSchema = z
 		name: z.string().describe("Name of the new record"),
 		type: z
 			.string()
-			.describe("Record type (e.g., 'markdown', 'formatted note', 'bookmark', 'group')"),
-		content: z.string().optional().describe("Content for text-based records (optional)"),
+			.describe(
+				"Record type (e.g., 'markdown', 'formatted note', 'bookmark', 'group')",
+			),
+		content: z
+			.string()
+			.optional()
+			.describe("Content for text-based records (optional)"),
 		url: z.string().optional().describe("URL for bookmark records (optional)"),
 		parentGroupUuid: z
 			.string()
 			.optional()
-			.describe("UUID of the parent group (optional, defaults to incoming group)"),
+			.describe(
+				"UUID of the parent group (optional, defaults to incoming group)",
+			),
 		databaseName: z
 			.string()
 			.optional()
-			.describe("Database to create the record in (optional, defaults to current)"),
+			.describe(
+				"Database to create the record in (optional, defaults to current)",
+			),
 	})
 	.strict();
 

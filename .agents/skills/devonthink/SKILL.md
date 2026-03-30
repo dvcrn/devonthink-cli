@@ -16,50 +16,13 @@ Use JSON output when the result will be piped to other tools or parsed by code.
 Read `references/commands.md` for the supported command surface.
 Read `references/examples.md` for concrete examples.
 
-## Exact Command Surface
-
-Use these exact command names. Do not invent `get_*` variants unless they are listed here.
-
-```text
-tools
-schema <tool>
-is_running
-open_databases
-current_database
-selected_records
-search [query]
-lookup_record [lookupType]
-list_group_content [uuid]
-record_properties [uuid]
-record_content [uuid]
-record_by_identifier [uuid]
-create_record [name]
-create_from_url [url]
-rename_record [uuid]
-move_record [uuid]
-delete_record [uuid]
-add_tags [uuid]
-remove_tags [uuid]
-update_record_content [uuid]
-set_record_properties [uuid]
-classify [recordUuid]
-compare [recordUuid]
-replicate_record [uuid]
-duplicate_record [uuid]
-convert_record [uuid]
-check_ai_health
-ask_ai_about_documents [question]
-create_summary_document
-ai_tool_documentation [toolName]
-```
-
 ## Runbook
 
 1. Confirm DEVONthink is running with `devonthink is_running`.
-2. Confirm the active or target database with `devonthink current_database` or `devonthink open_databases`.
+2. Confirm the active or target database with `devonthink current_database` or `devonthink get_open_databases`.
 3. Resolve record UUIDs with read-only commands before write operations.
 4. Prefer `--json` for automation and downstream parsing.
-5. Before mutating records, verify the target with `record_properties`, `record_by_identifier`, `search`, or `lookup_record`.
+5. Before mutating records, verify the target with `get_record_properties`, `get_record_by_identifier`, `search`, or `lookup_record`.
 6. Use `schema <tool>` when you need exact parameter names.
 
 ## Installation And Agent Setup
@@ -100,7 +63,7 @@ Use `--json` for automation and downstream parsing.
 
 ```bash
 devonthink search invoice --json
-devonthink record_properties <uuid> --json
+devonthink get_record_properties <uuid> --json
 ```
 
 ## Positional Arguments
@@ -109,8 +72,8 @@ Many tools support the first obvious required argument positionally.
 
 ```bash
 devonthink search invoice
-devonthink record_content <uuid>
-devonthink record_properties <uuid>
+devonthink get_record_content <uuid>
+devonthink get_record_properties <uuid>
 devonthink rename_record <uuid> --new-name "Renamed note"
 devonthink create_record "New Note" --type markdown --content "Hello"
 devonthink create_from_url https://example.com --format markdown
@@ -125,7 +88,7 @@ Use these as canonical examples:
 devonthink is_running
 
 # list open databases
-devonthink open_databases
+devonthink get_open_databases
 
 # inspect the current database
 devonthink current_database
@@ -134,10 +97,10 @@ devonthink current_database
 devonthink search invoice --database-name Test
 
 # get a record by UUID
-devonthink record_properties <uuid>
+devonthink get_record_properties <uuid>
 
 # read record content
-devonthink record_content <uuid>
+devonthink get_record_content <uuid>
 
 # create a note
 devonthink create_record "Meeting Notes" --type markdown --content "# Notes" --database-name Test
@@ -159,8 +122,8 @@ devonthink remove_tags <uuid> --tags old-tag
 
 Before write operations:
 
-1. Confirm the target database with `current_database` or `open_databases`.
-2. Confirm the target record with `record_properties`, `record_by_identifier`, `search`, or `lookup_record`.
+1. Confirm the target database with `current_database` or `get_open_databases`.
+2. Confirm the target record with `get_record_properties`, `get_record_by_identifier`, `search`, or `lookup_record`.
 3. Confirm the destination group before `move_record`, `duplicate_record`, `replicate_record`, or `convert_record`.
 4. Prefer UUIDs over names when mutating records.
 

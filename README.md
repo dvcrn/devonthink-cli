@@ -60,15 +60,15 @@ devonthink schema create_record --json
 Run a tool in human-readable mode:
 
 ```bash
-devonthink get_open_databases
+devonthink open_databases
 devonthink search Alpha --group-uuid <uuid> --database-name Test
-devonthink get_record_content <uuid>
+devonthink record_content <uuid>
 ```
 
 Run the same tool in machine-readable mode:
 
 ```bash
-devonthink get_open_databases --json
+devonthink open_databases --json
 devonthink search --query Alpha --group-uuid <uuid> --database-name Test --json
 ```
 
@@ -81,7 +81,7 @@ Many tools also support the first obvious required argument positionally. For ex
 
 ```bash
 devonthink search Alpha
-devonthink get_record_content <uuid>
+devonthink record_content <uuid>
 devonthink rename_record <uuid> --new-name "New title"
 ```
 

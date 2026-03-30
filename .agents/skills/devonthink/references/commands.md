@@ -13,15 +13,15 @@ Common top-level commands:
 tools
 schema <tool>
 is_running
-open_databases
+get_open_databases
 current_database
 selected_records
 search [query]
 lookup_record [lookupType]
 list_group_content [uuid]
-record_properties [uuid]
-record_content [uuid]
-record_by_identifier [uuid]
+get_record_properties [uuid]
+get_record_content [uuid]
+get_record_by_identifier [uuid]
 create_record [name]
 create_from_url [url]
 rename_record [uuid]
@@ -39,7 +39,7 @@ convert_record [uuid]
 check_ai_health
 ask_ai_about_documents [question]
 create_summary_document
-ai_tool_documentation [toolName]
+get_ai_tool_documentation [toolName]
 ```
 
 Global flags:

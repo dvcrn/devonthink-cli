@@ -2,7 +2,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
 import { getRecordLookupHelpers } from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
@@ -26,7 +30,9 @@ interface RemoveTagsResult {
 	error?: string;
 }
 
-const removeTags = async (input: RemoveTagsInput): Promise<RemoveTagsResult> => {
+const removeTags = async (
+	input: RemoveTagsInput,
+): Promise<RemoveTagsResult> => {
 	const { uuid, tags, databaseName } = input;
 
 	// Validate string inputs
@@ -35,11 +41,17 @@ const removeTags = async (input: RemoveTagsInput): Promise<RemoveTagsResult> => 
 	}
 	for (const tag of tags) {
 		if (!isJXASafeString(tag)) {
-			return { success: false, error: `Tag "${tag}" contains invalid characters` };
+			return {
+				success: false,
+				error: `Tag "${tag}" contains invalid characters`,
+			};
 		}
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 
 	const script = `

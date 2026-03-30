@@ -12,13 +12,22 @@ const LookupRecordSchema = z
 			.enum(["filename", "path", "url", "tags", "comment", "contentHash"])
 			.describe("Type of lookup to perform"),
 		value: z.string().describe("Value to search for"),
-		tags: z.array(z.string()).optional().describe("Tags to search for (for lookupType 'tags')"),
+		tags: z
+			.array(z.string())
+			.optional()
+			.describe("Tags to search for (for lookupType 'tags')"),
 		matchAnyTag: z
 			.boolean()
 			.optional()
 			.describe("Match any tag instead of all (for lookupType 'tags')"),
-		databaseName: z.string().optional().describe("Database to search in (optional)"),
-		limit: z.number().optional().describe("Maximum results to return (optional)"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database to search in (optional)"),
+		limit: z
+			.number()
+			.optional()
+			.describe("Maximum results to return (optional)"),
 	})
 	.strict();
 
@@ -44,8 +53,17 @@ interface LookupResult {
 	totalCount?: number;
 }
 
-const lookupRecord = async (input: LookupRecordInput): Promise<LookupResult> => {
-	const { lookupType, value, tags, matchAnyTag, databaseName, limit = 50 } = input;
+const lookupRecord = async (
+	input: LookupRecordInput,
+): Promise<LookupResult> => {
+	const {
+		lookupType,
+		value,
+		tags,
+		matchAnyTag,
+		databaseName,
+		limit = 50,
+	} = input;
 
 	const script = `
     (() => {

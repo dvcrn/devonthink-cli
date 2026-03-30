@@ -3,11 +3,16 @@ import { createDevonThinkTool } from "../base/DevonThinkTool.js";
 
 const CreateSummaryDocumentSchema = z
 	.object({
-		documentUuids: z.array(z.string()).min(1).describe("UUIDs of documents to summarize"),
+		documentUuids: z
+			.array(z.string())
+			.min(1)
+			.describe("UUIDs of documents to summarize"),
 		summaryType: z
 			.enum(["markdown", "rich", "sheet", "simple"])
 			.default("markdown")
-			.describe("Output document format: markdown, rich text, sheet, or plain text"),
+			.describe(
+				"Output document format: markdown, rich text, sheet, or plain text",
+			),
 		// Note: summaryStyle parameter is documented in DEVONthink API but appears non-functional in testing
 		// Keeping for future compatibility when/if it works
 		summaryStyle: z
@@ -19,22 +24,34 @@ const CreateSummaryDocumentSchema = z
 				"custom summary",
 			])
 			.optional()
-			.describe("Summary style (Note: Currently non-functional in DEVONthink API)"),
+			.describe(
+				"Summary style (Note: Currently non-functional in DEVONthink API)",
+			),
 		parentGroupUuid: z
 			.string()
 			.optional()
 			.describe("UUID of group where summary should be created"),
-		customTitle: z.string().optional().describe("Custom title for the summary document"),
+		customTitle: z
+			.string()
+			.optional()
+			.describe("Custom title for the summary document"),
 	})
 	.strict();
 
 export const createSummaryDocumentTool = createDevonThinkTool({
 	name: "create_summary_document",
-	description: "Create an AI-generated summary document from multiple DEVONthink documents.",
+	description:
+		"Create an AI-generated summary document from multiple DEVONthink documents.",
 
 	inputSchema: CreateSummaryDocumentSchema,
 	buildScript: (input, helpers) => {
-		const { documentUuids, summaryType, summaryStyle, parentGroupUuid, customTitle } = input;
+		const {
+			documentUuids,
+			summaryType,
+			summaryStyle,
+			parentGroupUuid,
+			customTitle,
+		} = input;
 
 		return helpers.wrapInTryCatch(`
       const theApp = Application("DEVONthink");

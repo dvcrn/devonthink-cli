@@ -2,8 +2,15 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -15,7 +22,10 @@ const CompareSchema = z
 			.string()
 			.optional()
 			.describe("Second record UUID for direct comparison (optional)"),
-		databaseName: z.string().optional().describe("Database name to search in (optional)"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database name to search in (optional)"),
 		comparison: z
 			.enum(["data comparison", "tags comparison"])
 			.optional()
@@ -76,13 +86,22 @@ const compare = async (input: CompareInput): Promise<CompareResult> => {
 		return { success: false, error: "Record UUID contains invalid characters" };
 	}
 	if (compareWithUuid && !isJXASafeString(compareWithUuid)) {
-		return { success: false, error: "Compare with UUID contains invalid characters" };
+		return {
+			success: false,
+			error: "Compare with UUID contains invalid characters",
+		};
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 	if (comparison && !isJXASafeString(comparison)) {
-		return { success: false, error: "Comparison type contains invalid characters" };
+		return {
+			success: false,
+			error: "Comparison type contains invalid characters",
+		};
 	}
 
 	const script = `

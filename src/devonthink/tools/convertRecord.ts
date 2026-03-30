@@ -2,8 +2,16 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper, isGroupHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+	isGroupHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -15,7 +23,9 @@ const ConvertRecordSchema = z
 		recordPath: z
 			.string()
 			.optional()
-			.describe("DEVONthink location path of the record (e.g., '/Inbox/My Document')"),
+			.describe(
+				"DEVONthink location path of the record (e.g., '/Inbox/My Document')",
+			),
 		format: z
 			.enum([
 				"bookmark",
@@ -43,7 +53,9 @@ const ConvertRecordSchema = z
 	.strict()
 	.refine(
 		(data) =>
-			data.uuid !== undefined || data.recordId !== undefined || data.recordPath !== undefined,
+			data.uuid !== undefined ||
+			data.recordId !== undefined ||
+			data.recordPath !== undefined,
 		{
 			message: "Either uuid, recordId, or recordPath must be provided",
 		},
@@ -65,7 +77,9 @@ interface ConvertRecordResult {
 	};
 }
 
-const convertRecord = async (input: ConvertRecordInput): Promise<ConvertRecordResult> => {
+const convertRecord = async (
+	input: ConvertRecordInput,
+): Promise<ConvertRecordResult> => {
 	const uuid = input.uuid;
 	const recordId = input.recordId;
 	const recordPath = input.recordPath;

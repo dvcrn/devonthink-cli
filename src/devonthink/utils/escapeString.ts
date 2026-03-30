@@ -54,7 +54,9 @@ export function escapeSearchQuery(query: string): string {
  * Safely formats a value for JXA script interpolation.
  * Handles different types appropriately.
  */
-export function formatValueForJXA(value: string | number | boolean | undefined | null): string {
+export function formatValueForJXA(
+	value: string | number | boolean | undefined | null,
+): string {
 	if (value === undefined || value === null) {
 		return "null";
 	}

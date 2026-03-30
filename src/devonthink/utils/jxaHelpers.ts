@@ -309,7 +309,8 @@ export function formatLookupOptions(
 	if (id !== undefined) options.push(`id: ${id}`);
 	if (path) options.push(`path: ${JSON.stringify(path)}`);
 	if (name) options.push(`name: ${JSON.stringify(name)}`);
-	if (databaseName) options.push(`databaseName: ${JSON.stringify(databaseName)}`);
+	if (databaseName)
+		options.push(`databaseName: ${JSON.stringify(databaseName)}`);
 
 	return `{ ${options.join(", ")} }`;
 }

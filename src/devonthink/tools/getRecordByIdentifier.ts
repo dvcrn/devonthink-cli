@@ -2,8 +2,15 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -11,8 +18,14 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 const GetRecordByIdentifierSchema = z
 	.object({
 		uuid: z.string().optional().describe("UUID of the record"),
-		id: z.number().optional().describe("ID of the record (requires databaseName)"),
-		databaseName: z.string().optional().describe("Database name (required with id)"),
+		id: z
+			.number()
+			.optional()
+			.describe("ID of the record (requires databaseName)"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database name (required with id)"),
 		referenceURL: z
 			.string()
 			.optional()
@@ -56,7 +69,9 @@ interface RecordResult {
 	};
 }
 
-const getRecordByIdentifier = async (input: GetRecordByIdentifierInput): Promise<RecordResult> => {
+const getRecordByIdentifier = async (
+	input: GetRecordByIdentifierInput,
+): Promise<RecordResult> => {
 	const { uuid, id, databaseName, referenceURL } = input;
 
 	// Validate string inputs
@@ -64,10 +79,16 @@ const getRecordByIdentifier = async (input: GetRecordByIdentifierInput): Promise
 		return { success: false, error: "UUID contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 	if (referenceURL && !isJXASafeString(referenceURL)) {
-		return { success: false, error: "Reference URL contains invalid characters" };
+		return {
+			success: false,
+			error: "Reference URL contains invalid characters",
+		};
 	}
 	if (id !== undefined && typeof id !== "number") {
 		return { success: false, error: "ID must be a number" };
@@ -224,7 +245,7 @@ const getRecordByIdentifier = async (input: GetRecordByIdentifierInput): Promise
 };
 
 export const getRecordByIdentifierTool: Tool = {
-	name: "get_record_by_identifier",
+	name: "record_by_identifier",
 	description:
 		'Get a DEVONthink record using its UUID, ID, or x-devonthink-item:// reference URL.\n\nExample (Reference URL):\n{\n  "referenceURL": "x-devonthink-item://1234-5678-90AB-CDEF"\n}\n\nExample (Reference URL - email):\n{\n  "referenceURL": "x-devonthink-item://message:%3Cfoo@bar.com%3E"\n}\n\nExample (UUID):\n{\n  "uuid": "1234-5678-90AB-CDEF"\n}\n\nExample (ID):\n{\n  "id": 12345,\n  "databaseName": "MyDatabase"\n}',
 	inputSchema: zodToJsonSchema(GetRecordByIdentifierSchema) as ToolInput,

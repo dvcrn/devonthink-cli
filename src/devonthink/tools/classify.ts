@@ -2,8 +2,15 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -11,12 +18,18 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 const ClassifySchema = z
 	.object({
 		recordUuid: z.string().describe("UUID of the record to classify"),
-		databaseName: z.string().optional().describe("Database name to search in (optional)"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database name to search in (optional)"),
 		comparison: z
 			.enum(["data comparison", "tags comparison"])
 			.optional()
 			.describe("Comparison type for classification (optional)"),
-		tags: z.boolean().optional().describe("Propose tags instead of groups (optional)"),
+		tags: z
+			.boolean()
+			.optional()
+			.describe("Propose tags instead of groups (optional)"),
 	})
 	.strict();
 
@@ -42,10 +55,16 @@ const classify = async (input: ClassifyInput): Promise<ClassifyResult> => {
 		return { success: false, error: "Record UUID contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 	if (comparison && !isJXASafeString(comparison)) {
-		return { success: false, error: "Comparison type contains invalid characters" };
+		return {
+			success: false,
+			error: "Comparison type contains invalid characters",
+		};
 	}
 
 	const script = `

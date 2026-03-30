@@ -12,28 +12,47 @@ const CreateFromUrlSchema = z
 		format: z
 			.enum(["formatted_note", "markdown", "pdf", "web_document"])
 			.describe("Format for the new record"),
-		name: z.string().optional().describe("Custom name for the record (optional)"),
+		name: z
+			.string()
+			.optional()
+			.describe("Custom name for the record (optional)"),
 		parentGroupUuid: z
 			.string()
 			.optional()
-			.describe("UUID of the parent group (optional, defaults to incoming group)"),
+			.describe(
+				"UUID of the parent group (optional, defaults to incoming group)",
+			),
 		readability: z
 			.boolean()
 			.optional()
 			.describe("Use readability mode to declutter the page (optional)"),
-		userAgent: z.string().optional().describe("Custom user agent for the request (optional)"),
-		referrer: z.string().optional().describe("HTTP referrer for the request (optional)"),
+		userAgent: z
+			.string()
+			.optional()
+			.describe("Custom user agent for the request (optional)"),
+		referrer: z
+			.string()
+			.optional()
+			.describe("HTTP referrer for the request (optional)"),
 		pdfOptions: z
 			.object({
-				pagination: z.boolean().optional().describe("Paginate the PDF (optional)"),
-				width: z.number().optional().describe("Width for PDF in points (optional)"),
+				pagination: z
+					.boolean()
+					.optional()
+					.describe("Paginate the PDF (optional)"),
+				width: z
+					.number()
+					.optional()
+					.describe("Width for PDF in points (optional)"),
 			})
 			.optional()
 			.describe("PDF-specific options (optional)"),
 		databaseName: z
 			.string()
 			.optional()
-			.describe("Database to create the record in (optional, defaults to current)"),
+			.describe(
+				"Database to create the record in (optional, defaults to current)",
+			),
 	})
 	.strict();
 
@@ -49,7 +68,9 @@ interface CreateFromUrlResult {
 	uuid?: string;
 }
 
-const createFromUrl = async (input: CreateFromUrlInput): Promise<CreateFromUrlResult> => {
+const createFromUrl = async (
+	input: CreateFromUrlInput,
+): Promise<CreateFromUrlResult> => {
 	const {
 		url,
 		format,
@@ -100,13 +121,13 @@ const createFromUrl = async (input: CreateFromUrlInput): Promise<CreateFromUrlRe
         
         // Add PDF-specific options if provided
         ${
-			pdfOptions && format === "pdf"
-				? `
+					pdfOptions && format === "pdf"
+						? `
           ${pdfOptions.pagination ? `options.pagination = ${pdfOptions.pagination};` : ""}
           ${pdfOptions.width ? `options.width = ${pdfOptions.width};` : ""}
         `
-				: ""
-		}
+						: ""
+				}
         
         let newRecord;
         

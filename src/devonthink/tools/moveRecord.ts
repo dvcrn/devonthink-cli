@@ -2,8 +2,16 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper, isGroupHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+	isGroupHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -14,8 +22,14 @@ const MoveRecordSchema = z
 		recordId: z.number().optional().describe("ID of the record to move"),
 		recordName: z.string().optional().describe("Name of the record to move"),
 		recordPath: z.string().optional().describe("Path of the record to move"),
-		destinationGroupUuid: z.string().optional().describe("UUID of the destination group"),
-		databaseName: z.string().optional().describe("Database to move the record in (optional)"),
+		destinationGroupUuid: z
+			.string()
+			.optional()
+			.describe("UUID of the destination group"),
+		databaseName: z
+			.string()
+			.optional()
+			.describe("Database to move the record in (optional)"),
 	})
 	.strict()
 	.refine(
@@ -25,7 +39,8 @@ const MoveRecordSchema = z
 			data.recordName !== undefined ||
 			data.recordPath !== undefined,
 		{
-			message: "Either uuid, recordId, recordName, or recordPath must be provided",
+			message:
+				"Either uuid, recordId, recordName, or recordPath must be provided",
 		},
 	);
 
@@ -34,7 +49,14 @@ type MoveRecordInput = z.infer<typeof MoveRecordSchema>;
 const moveRecord = async (
 	input: MoveRecordInput,
 ): Promise<{ success: boolean; newLocation?: string; error?: string }> => {
-	const { uuid, recordId, recordName, recordPath, destinationGroupUuid, databaseName } = input;
+	const {
+		uuid,
+		recordId,
+		recordName,
+		recordPath,
+		destinationGroupUuid,
+		databaseName,
+	} = input;
 
 	// Validate string inputs
 	if (uuid && !isJXASafeString(uuid)) {
@@ -72,8 +94,8 @@ const moveRecord = async (
       try {
         // Get target database
         const targetDatabase = getDatabase(theApp, ${
-			databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"
-		});
+					databaseName ? `"${escapeStringForJXA(databaseName)}"` : "null"
+				});
         
         // Build lookup options for the record to move
         const lookupOptions = {
@@ -103,8 +125,10 @@ const moveRecord = async (
         // Find the destination group
         let destinationGroupRecord;
         const pDestinationGroupUuid = ${
-			destinationGroupUuid ? `"${escapeStringForJXA(destinationGroupUuid)}"` : "null"
-		};
+					destinationGroupUuid
+						? `"${escapeStringForJXA(destinationGroupUuid)}"`
+						: "null"
+				};
         
         if (pDestinationGroupUuid) {
           try {

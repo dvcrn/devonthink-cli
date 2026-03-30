@@ -19,7 +19,10 @@ export interface DevonThinkResult {
 /**
  * Configuration for a DEVONthink tool
  */
-export interface DevonThinkToolConfig<TInput, TResult extends DevonThinkResult> {
+export interface DevonThinkToolConfig<
+	TInput,
+	TResult extends DevonThinkResult,
+> {
 	name: string;
 	description: string;
 	inputSchema: ZodSchema<TInput>;
@@ -34,7 +37,12 @@ export interface ScriptHelpers {
 	formatValue: (value: any) => string;
 	wrapInTryCatch: (code: string, errorHandler?: string) => string;
 	buildDatabaseLookup: (databaseName?: string) => string;
-	buildRecordLookup: (uuid?: string, id?: number, path?: string, databaseName?: string) => string;
+	buildRecordLookup: (
+		uuid?: string,
+		id?: number,
+		path?: string,
+		databaseName?: string,
+	) => string;
 }
 
 /**
@@ -47,7 +55,10 @@ export abstract class DevonThinkTool<
 	protected readonly name: string;
 	protected readonly description: string;
 	protected readonly inputSchema: ZodSchema<TInput>;
-	protected readonly buildScript: (input: TInput, helpers: ScriptHelpers) => string;
+	protected readonly buildScript: (
+		input: TInput,
+		helpers: ScriptHelpers,
+	) => string;
 
 	constructor(config: DevonThinkToolConfig<TInput, TResult>) {
 		this.name = config.name;
@@ -79,7 +90,9 @@ export abstract class DevonThinkTool<
 		const script = this.buildScript(validatedInput, this.getHelpers());
 
 		// Wrap in IIFE if not already wrapped
-		const wrappedScript = script.trim().startsWith("(") ? script : `(() => { ${script} })();`;
+		const wrappedScript = script.trim().startsWith("(")
+			? script
+			: `(() => { ${script} })();`;
 
 		// Execute and return result
 		return await executeJxa<TResult>(wrappedScript);
@@ -118,7 +131,9 @@ export abstract class DevonThinkTool<
 		if (typeof value === "object") {
 			const lines = ["const obj = {};"];
 			for (const [key, val] of Object.entries(value)) {
-				lines.push(`obj["${escapeStringForJXA(key)}"] = ${this.formatValue(val)};`);
+				lines.push(
+					`obj["${escapeStringForJXA(key)}"] = ${this.formatValue(val)};`,
+				);
 			}
 			return `(function() { ${lines.join(" ")} return obj; })()`;
 		}
@@ -174,7 +189,9 @@ export abstract class DevonThinkTool<
 		const lines: string[] = [];
 
 		if (uuid) {
-			lines.push(`const record = theApp.getRecordWithUuid("${escapeStringForJXA(uuid)}");`);
+			lines.push(
+				`const record = theApp.getRecordWithUuid("${escapeStringForJXA(uuid)}");`,
+			);
 			lines.push(
 				`if (!record) throw new Error("Record not found with UUID: ${escapeStringForJXA(uuid)}");`,
 			);
@@ -186,7 +203,9 @@ export abstract class DevonThinkTool<
 				lines.push("const targetDatabase = theApp.currentDatabase();");
 			}
 			lines.push(`const record = targetDatabase.getRecordWithId(${id});`);
-			lines.push(`if (!record) throw new Error("Record not found with ID: ${id}");`);
+			lines.push(
+				`if (!record) throw new Error("Record not found with ID: ${id}");`,
+			);
 		} else if (path) {
 			// Need database for path lookup
 			if (databaseName) {
@@ -194,7 +213,9 @@ export abstract class DevonThinkTool<
 			} else {
 				lines.push("const targetDatabase = theApp.currentDatabase();");
 			}
-			lines.push(`const record = targetDatabase.getRecordAt("${escapeStringForJXA(path)}");`);
+			lines.push(
+				`const record = targetDatabase.getRecordAt("${escapeStringForJXA(path)}");`,
+			);
 			lines.push(
 				`if (!record) throw new Error("Record not found at path: ${escapeStringForJXA(path)}");`,
 			);

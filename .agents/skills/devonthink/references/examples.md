@@ -10,7 +10,7 @@ devonthink current_database
 ## List databases and selected records
 
 ```bash
-devonthink open_databases
+devonthink get_open_databases
 devonthink selected_records --json
 ```
 
@@ -24,8 +24,8 @@ devonthink search invoice --database-name Test --json
 ## Inspect a record
 
 ```bash
-devonthink record_properties <uuid>
-devonthink record_content <uuid>
+devonthink get_record_properties <uuid>
+devonthink get_record_content <uuid>
 ```
 
 ## Create and update a note

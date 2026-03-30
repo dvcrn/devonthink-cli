@@ -3,7 +3,10 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
 import { escapeStringForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper } from "../utils/jxaHelpers.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -15,27 +18,39 @@ const SetRecordPropertiesSchema = z
 		recordPath: z
 			.string()
 			.optional()
-			.describe("DEVONthink location path of the record (e.g., '/Inbox/My Document')"),
+			.describe(
+				"DEVONthink location path of the record (e.g., '/Inbox/My Document')",
+			),
 		databaseName: z
 			.string()
 			.optional()
-			.describe("Database containing the record (required for recordId or recordPath)"),
+			.describe(
+				"Database containing the record (required for recordId or recordPath)",
+			),
 
 		// Properties to set (all optional)
-		comment: z.string().optional().describe("Set comment (overwrites any existing comment)"),
+		comment: z
+			.string()
+			.optional()
+			.describe("Set comment (overwrites any existing comment)"),
 		flag: z.boolean().optional().describe("Set flagged state"),
 		locked: z.boolean().optional().describe("Set locked (locking) state"),
 		excludeFromChat: z.boolean().optional(),
 		excludeFromClassification: z.boolean().optional(),
 		excludeFromSearch: z.boolean().optional(),
 		excludeFromSeeAlso: z.boolean().optional(),
-		excludeFromTagging: z.boolean().optional().describe("Only applicable to groups"),
+		excludeFromTagging: z
+			.boolean()
+			.optional()
+			.describe("Only applicable to groups"),
 		excludeFromWikiLinking: z.boolean().optional(),
 	})
 	.strict()
 	.refine(
 		(data) =>
-			data.uuid !== undefined || data.recordId !== undefined || data.recordPath !== undefined,
+			data.uuid !== undefined ||
+			data.recordId !== undefined ||
+			data.recordPath !== undefined,
 		{ message: "Either uuid, recordId, or recordPath must be provided" },
 	);
 
@@ -78,7 +93,10 @@ const setRecordProperties = async (
 		return { success: false, error: "Record path contains invalid characters" };
 	}
 	if (databaseName && !isJXASafeString(databaseName)) {
-		return { success: false, error: "Database name contains invalid characters" };
+		return {
+			success: false,
+			error: "Database name contains invalid characters",
+		};
 	}
 	if (comment !== undefined && !isJXASafeString(comment)) {
 		return { success: false, error: "Comment contains invalid characters" };
@@ -154,8 +172,8 @@ const setRecordProperties = async (
         ${excludeFromSearch !== undefined ? `if (rec.excludeFromSearch !== undefined) { setIfProvided("excludeFromSearch", ${excludeFromSearch}); } else { skipped.push("excludeFromSearch: not available"); }` : ""}
         ${excludeFromSeeAlso !== undefined ? `if (rec.excludeFromSeeAlso !== undefined) { setIfProvided("excludeFromSeeAlso", ${excludeFromSeeAlso}); } else { skipped.push("excludeFromSeeAlso: not available"); }` : ""}
         ${
-			excludeFromTagging !== undefined
-				? `
+					excludeFromTagging !== undefined
+						? `
           (function(){
             try {
               const rt = rec.recordType ? rec.recordType() : null;
@@ -168,8 +186,8 @@ const setRecordProperties = async (
             } catch (e) { skipped.push("excludeFromTagging: " + e.toString()); }
           })();
         `
-				: ""
-		}
+						: ""
+				}
         ${excludeFromWikiLinking !== undefined ? `if (rec.excludeFromWikiLinking !== undefined) { setIfProvided("excludeFromWikiLinking", ${excludeFromWikiLinking}); } else { skipped.push("excludeFromWikiLinking: not available"); }` : ""}
 
         // Build response

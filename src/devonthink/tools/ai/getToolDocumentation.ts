@@ -9,13 +9,15 @@ const GetToolDocumentationSchema = z
 	.object({
 		toolName: z
 			.enum([
-				"get_ai_tool_documentation",
+				"ai_tool_documentation",
 				"check_ai_health",
 				"ask_ai_about_documents",
 				"create_summary_document",
 			])
 			.optional()
-			.describe("Specific AI tool to get documentation for (returns all if not specified)"),
+			.describe(
+				"Specific AI tool to get documentation for (returns all if not specified)",
+			),
 	})
 	.strict();
 
@@ -46,8 +48,8 @@ interface GetToolDocumentationResult {
 }
 
 const toolDocs: Record<string, ToolDocumentation> = {
-	get_ai_tool_documentation: {
-		name: "get_ai_tool_documentation",
+	ai_tool_documentation: {
+		name: "ai_tool_documentation",
 		summary:
 			"Get detailed documentation for DEVONthink AI tools including examples and use cases",
 		description: `Provides comprehensive documentation for all AI-powered tools available in the DEVONthink MCP server. Returns detailed information about parameters, examples, use cases, and implementation notes for each tool.`,
@@ -246,7 +248,7 @@ const getToolDocumentation = async (
 };
 
 export const getToolDocumentationTool: Tool = {
-	name: "get_ai_tool_documentation",
+	name: "ai_tool_documentation",
 	description:
 		"Get detailed documentation for DEVONthink AI tools including examples and use cases.",
 	inputSchema: zodToJsonSchema(GetToolDocumentationSchema) as ToolInput,

@@ -2,7 +2,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
 import { getRecordLookupHelpers } from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
@@ -31,7 +35,10 @@ const addTags = async (input: AddTagsInput): Promise<AddTagsResult> => {
 	}
 	for (const tag of tags) {
 		if (!isJXASafeString(tag)) {
-			return { success: false, error: `Tag "${tag}" contains invalid characters` };
+			return {
+				success: false,
+				error: `Tag "${tag}" contains invalid characters`,
+			};
 		}
 	}
 

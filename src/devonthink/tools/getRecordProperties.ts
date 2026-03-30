@@ -2,8 +2,15 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
-import { escapeStringForJXA, formatValueForJXA, isJXASafeString } from "../utils/escapeString.js";
-import { getRecordLookupHelpers, getDatabaseHelper } from "../utils/jxaHelpers.js";
+import {
+	escapeStringForJXA,
+	formatValueForJXA,
+	isJXASafeString,
+} from "../utils/escapeString.js";
+import {
+	getRecordLookupHelpers,
+	getDatabaseHelper,
+} from "../utils/jxaHelpers.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -11,11 +18,16 @@ type ToolInput = z.infer<typeof ToolInputSchema>;
 const GetRecordPropertiesSchema = z
 	.object({
 		uuid: z.string().optional().describe("UUID of the record"),
-		recordId: z.number().optional().describe("ID of the record to get properties for"),
+		recordId: z
+			.number()
+			.optional()
+			.describe("ID of the record to get properties for"),
 		recordPath: z
 			.string()
 			.optional()
-			.describe("DEVONthink location path of the record (e.g., '/Inbox/My Document')"),
+			.describe(
+				"DEVONthink location path of the record (e.g., '/Inbox/My Document')",
+			),
 		databaseName: z
 			.string()
 			.optional()
@@ -24,7 +36,9 @@ const GetRecordPropertiesSchema = z
 	.strict()
 	.refine(
 		(data) =>
-			data.uuid !== undefined || data.recordId !== undefined || data.recordPath !== undefined,
+			data.uuid !== undefined ||
+			data.recordId !== undefined ||
+			data.recordPath !== undefined,
 		{
 			message: "Either uuid, recordId, or recordPath must be provided",
 		},
@@ -65,7 +79,9 @@ interface RecordProperties {
 	characterCount?: number;
 }
 
-const getRecordProperties = async (input: GetRecordPropertiesInput): Promise<RecordProperties> => {
+const getRecordProperties = async (
+	input: GetRecordPropertiesInput,
+): Promise<RecordProperties> => {
 	const { uuid, recordId, recordPath, databaseName } = input;
 
 	// Validate string inputs
@@ -187,7 +203,7 @@ const getRecordProperties = async (input: GetRecordPropertiesInput): Promise<Rec
 };
 
 export const getRecordPropertiesTool: Tool = {
-	name: "get_record_properties",
+	name: "record_properties",
 	description:
 		'Get detailed properties and metadata for a DEVONthink record.\n\nExample:\n{\n  "uuid": "1234-5678-90AB-CDEF"\n}',
 	inputSchema: zodToJsonSchema(GetRecordPropertiesSchema) as ToolInput,

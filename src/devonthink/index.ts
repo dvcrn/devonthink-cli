@@ -30,54 +30,54 @@ import { setRecordPropertiesTool } from "./tools/setRecordProperties.js";
 import { updateRecordContentTool } from "./tools/updateRecordContent.js";
 
 export const devonthinkTools: Tool[] = [
-  isRunningTool,
-  createRecordTool,
-  deleteRecordTool,
-  moveRecordTool,
-  getRecordPropertiesTool,
-  getRecordByIdentifierTool,
-  searchTool,
-  lookupRecordTool,
-  createFromUrlTool,
-  getOpenDatabasesTool,
-  currentDatabaseTool,
-  selectedRecordsTool,
-  listGroupContentTool,
-  getRecordContentTool,
-  renameRecordTool,
-  addTagsTool,
-  removeTagsTool,
-  classifyTool,
-  compareTool,
-  replicateRecordTool,
-  duplicateRecordTool,
-  convertRecordTool,
-  updateRecordContentTool,
-  setRecordPropertiesTool,
-  askAiAboutDocumentsTool,
-  checkAIHealthTool,
-  createSummaryDocumentTool,
-  getToolDocumentationTool,
+	isRunningTool,
+	createRecordTool,
+	deleteRecordTool,
+	moveRecordTool,
+	getRecordPropertiesTool,
+	getRecordByIdentifierTool,
+	searchTool,
+	lookupRecordTool,
+	createFromUrlTool,
+	getOpenDatabasesTool,
+	currentDatabaseTool,
+	selectedRecordsTool,
+	listGroupContentTool,
+	getRecordContentTool,
+	renameRecordTool,
+	addTagsTool,
+	removeTagsTool,
+	classifyTool,
+	compareTool,
+	replicateRecordTool,
+	duplicateRecordTool,
+	convertRecordTool,
+	updateRecordContentTool,
+	setRecordPropertiesTool,
+	askAiAboutDocumentsTool,
+	checkAIHealthTool,
+	createSummaryDocumentTool,
+	getToolDocumentationTool,
 ];
 
 export const devonthinkToolMap = new Map(
-  devonthinkTools.map((tool) => [tool.name, tool]),
+	devonthinkTools.map((tool) => [tool.name, tool]),
 );
 
 export function getTool(name: string): Tool | undefined {
-  return devonthinkToolMap.get(name);
+	return devonthinkToolMap.get(name);
 }
 
 export async function runTool(name: string, input: unknown): Promise<unknown> {
-  const tool = getTool(name);
+	const tool = getTool(name);
 
-  if (!tool) {
-    throw new Error(`Unknown tool: ${name}`);
-  }
+	if (!tool) {
+		throw new Error(`Unknown tool: ${name}`);
+	}
 
-  if (typeof tool.run !== "function") {
-    throw new Error(`Tool '${name}' has no run function.`);
-  }
+	if (typeof tool.run !== "function") {
+		throw new Error(`Tool '${name}' has no run function.`);
+	}
 
-  return tool.run(input);
+	return tool.run(input);
 }

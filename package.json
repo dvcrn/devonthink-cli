@@ -1,38 +1,40 @@
 {
-  "name": "devonthink",
-  "version": "0.1.0",
-  "description": "CLI for DEVONthink tools distilled from mcp-server-devonthink",
-  "author": "David Mohl <git@d.sh>",
-  "license": "GPL-3.0-or-later",
-  "type": "module",
-  "bin": {
-    "devonthink": "dist/cli.js",
-    "dt": "dist/cli.js",
-    "dt-cli": "dist/cli.js"
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "build": "tsup",
-    "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "1.0.1",
-    "yargs": "^18.0.0",
-    "zod": "^3.23.8",
-    "zod-to-json-schema": "^3.23.5"
-  },
-  "devDependencies": {
-    "@types/node": "^24.5.2",
-    "@types/yargs": "^17.0.35",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
-  }
+	"name": "devonthink",
+	"version": "0.1.0",
+	"description": "CLI for DEVONthink tools distilled from mcp-server-devonthink",
+	"author": "David Mohl <git@d.sh>",
+	"license": "GPL-3.0-or-later",
+	"type": "module",
+	"bin": {
+		"devonthink": "dist/cli.js",
+		"dt": "dist/cli.js",
+		"dt-cli": "dist/cli.js"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"build": "tsup",
+		"typecheck": "tsc --noEmit",
+		"lint": "tsc --noEmit",
+		"prepublishOnly": "npm run build",
+		"format": "biome format --write ."
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "1.0.1",
+		"yargs": "^18.0.0",
+		"zod": "^3.23.8",
+		"zod-to-json-schema": "^3.23.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.9",
+		"@types/node": "^24.5.2",
+		"@types/yargs": "^17.0.35",
+		"tsup": "^8.5.1",
+		"typescript": "^5.9.3"
+	}
 }

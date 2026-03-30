@@ -4,8 +4,15 @@ import { AI_ENGINES } from "./constants.js";
 
 const AskAiAboutDocumentsSchema = z
 	.object({
-		documentUuids: z.array(z.string()).min(1).describe("UUIDs of documents to analyze"),
-		question: z.string().min(1).max(10000).describe("The question to ask about the records"),
+		documentUuids: z
+			.array(z.string())
+			.min(1)
+			.describe("UUIDs of documents to analyze"),
+		question: z
+			.string()
+			.min(1)
+			.max(10000)
+			.describe("The question to ask about the records"),
 		temperature: z
 			.number()
 			.min(0)
