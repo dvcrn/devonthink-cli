@@ -25,7 +25,7 @@
 		"format": "biome format --write ."
 	},
 	"dependencies": {
-		"@modelcontextprotocol/sdk": "1.0.1",
+		"@modelcontextprotocol/sdk": "1.26.0",
 		"yargs": "^18.0.0",
 		"zod": "^3.23.8",
 		"zod-to-json-schema": "^3.23.5"
