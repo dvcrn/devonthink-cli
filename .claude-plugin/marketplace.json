@@ -5,14 +5,14 @@
 	},
 	"metadata": {
 		"description": "Claude plugin for the DEVONthink CLI — search, inspect, create, update, and organize DEVONthink records from the command line.",
-		"version": "0.2.0",
+		"version": "0.3.0",
 		"pluginRoot": "./.claude-plugin/plugins"
 	},
 	"plugins": [
 		{
 			"name": "devonthink",
 			"description": "Operate the DEVONthink CLI for databases, records, tags, search, and AI-powered document workflows.",
-			"version": "0.2.0",
+			"version": "0.3.0",
 			"author": {
 				"name": "dvcrn",
 				"url": "https://github.com/dvcrn"
