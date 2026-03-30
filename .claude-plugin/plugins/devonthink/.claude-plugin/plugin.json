@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/dvcrn/devonthink-cli",
   "repository": "https://github.com/dvcrn/devonthink-cli",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "keywords": [
     "devonthink",
     "cli",

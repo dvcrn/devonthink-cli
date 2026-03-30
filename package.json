@@ -1,9 +1,9 @@
 {
-  "name": "devonthink-cli",
+  "name": "devonthink",
   "version": "0.1.0",
   "description": "CLI for DEVONthink tools distilled from mcp-server-devonthink",
   "author": "David Mohl <git@d.sh>",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "bin": {
     "devonthink": "dist/cli.js",

@@ -94,3 +94,7 @@ devonthink rename_record <uuid> --new-name "New title"
 ## Safety
 
 When testing, only use the `Test` database.
+
+## License
+
+GPL-3.0-or-later
