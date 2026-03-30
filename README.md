@@ -13,7 +13,7 @@ It publishes these equivalent binaries:
 Install from npm:
 
 ```bash
-npm install -g devonthink-cli
+npm install -g devonthink
 ```
 
 After installation, you can use any equivalent executable:

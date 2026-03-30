@@ -1,6 +1,6 @@
 ---
 name: devonthink
-description: Operate the DEVONthink CLI for databases, records, search, tags, and AI workflows. Use when requests mention the `devonthink`, `dt`, or `dt-cli` commands, or the npm package `devonthink-cli`, especially for command construction, schema inspection, JSON output, and record/database operations.
+description: Operate the DEVONthink CLI for databases, records, search, tags, and AI workflows. Use when requests mention the `devonthink`, `dt`, or `dt-cli` commands, or the npm package `devonthink`, especially for command construction, schema inspection, JSON output, and record/database operations.
 ---
 
 # DEVONthink CLI
@@ -30,7 +30,7 @@ Read `references/examples.md` for concrete examples.
 Install from npm:
 
 ```bash
-npm install -g devonthink-cli
+npm install -g devonthink
 ```
 
 After installation, you can use any equivalent executable:
