@@ -6,7 +6,9 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "devonthink": "dist/cli.js"
+    "devonthink": "dist/cli.js",
+    "dt": "dist/cli.js",
+    "dt-cli": "dist/cli.js"
   },
   "files": [
     "dist",
