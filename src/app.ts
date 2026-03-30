@@ -37,6 +37,7 @@ export function buildCli(args: string[]): Argv {
 	cli = cli
 		.scriptName("devonthink")
 		.usage("$0 <command> [options]")
+		.completion("completion", "Generate a shell completion script")
 		.option("json", {
 			default: false,
 			describe: "Print machine-readable JSON output.",

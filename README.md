@@ -24,6 +24,14 @@ dt --help
 dt-cli --help
 ```
 
+All binaries also expose shell completion generation:
+
+```bash
+devonthink completion
+dt completion
+dt-cli completion
+```
+
 ## Agent Installation
 
 For Claude Desktop, add `dvcrn/devonthink-cli` as a marketplace plugin, then install the `devonthink` plugin from that marketplace.
@@ -42,6 +50,31 @@ npx skills add dvcrn/devonthink-cli
 ```
 
 ## Usage
+
+Generate a shell completion script:
+
+```bash
+devonthink completion
+```
+
+Install bash completion for the current shell session:
+
+```bash
+source <(devonthink completion)
+```
+
+Persist bash completion in `~/.bashrc`:
+
+```bash
+echo 'source <(devonthink completion)' >> ~/.bashrc
+```
+
+For zsh, enable bash completion compatibility and load the script:
+
+```bash
+echo 'autoload -U +X bashcompinit && bashcompinit' >> ~/.zshrc
+echo 'source <(devonthink completion)' >> ~/.zshrc
+```
 
 List tools:
 
