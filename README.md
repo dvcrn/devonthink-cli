@@ -2,11 +2,43 @@
 
 CLI for DEVONthink tools distilled from `mcp-server-devonthink`.
 
+It publishes these equivalent binaries:
+
+- `devonthink`
+- `dt`
+- `dt-cli`
+
 ## Install
 
+Install from npm:
+
 ```bash
-npm install
-npm run build
+npm install -g devonthink-cli
+```
+
+After installation, you can use any equivalent executable:
+
+```bash
+devonthink --help
+dt --help
+dt-cli --help
+```
+
+## Agent Installation
+
+For Claude Desktop, add `dvcrn/devonthink-cli` as a marketplace plugin, then install the `devonthink` plugin from that marketplace.
+
+For Claude Code, the equivalent commands are:
+
+```bash
+claude plugins marketplace add dvcrn/devonthink-cli
+claude plugins install devonthink@dvcrn-devonthink-cli --scope user
+```
+
+For `npx skills`, run:
+
+```bash
+npx skills add dvcrn/devonthink-cli
 ```
 
 ## Usage
@@ -14,30 +46,30 @@ npm run build
 List tools:
 
 ```bash
-node dist/cli.js tools
-node dist/cli.js tools --json
+devonthink tools
+devonthink tools --json
 ```
 
 Inspect a tool schema:
 
 ```bash
-node dist/cli.js schema create_record
-node dist/cli.js schema create_record --json
+devonthink schema create_record
+devonthink schema create_record --json
 ```
 
 Run a tool in human-readable mode:
 
 ```bash
-node dist/cli.js get_open_databases
-node dist/cli.js search Alpha --group-uuid <uuid> --database-name Test
-node dist/cli.js get_record_content <uuid>
+devonthink get_open_databases
+devonthink search Alpha --group-uuid <uuid> --database-name Test
+devonthink get_record_content <uuid>
 ```
 
 Run the same tool in machine-readable mode:
 
 ```bash
-node dist/cli.js get_open_databases --json
-node dist/cli.js search --query Alpha --group-uuid <uuid> --database-name Test --json
+devonthink get_open_databases --json
+devonthink search --query Alpha --group-uuid <uuid> --database-name Test --json
 ```
 
 Every command supports both:
@@ -48,9 +80,9 @@ Every command supports both:
 Many tools also support the first obvious required argument positionally. For example:
 
 ```bash
-node dist/cli.js search Alpha
-node dist/cli.js get_record_content <uuid>
-node dist/cli.js rename_record <uuid> --new-name "New title"
+devonthink search Alpha
+devonthink get_record_content <uuid>
+devonthink rename_record <uuid> --new-name "New title"
 ```
 
 ## Architecture
