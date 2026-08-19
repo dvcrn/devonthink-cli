@@ -1,7 +1,8 @@
+import { type Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
+import { escapeStringForJXA } from "../utils/escapeString.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -90,11 +91,11 @@ const createFromUrl = async (
       
       try {
         let targetDatabase;
-        if ("${databaseName || ""}") {
+        if ("${escapeStringForJXA(databaseName)}") {
           const databases = theApp.databases();
-          targetDatabase = databases.find(db => db.name() === "${databaseName}");
+          targetDatabase = databases.find(db => db.name() === "${escapeStringForJXA(databaseName)}");
           if (!targetDatabase) {
-            throw new Error("Database not found: ${databaseName}");
+            throw new Error("Database not found: ${escapeStringForJXA(databaseName)}");
           }
         } else {
           targetDatabase = theApp.currentDatabase();
@@ -102,23 +103,23 @@ const createFromUrl = async (
 
         // Get the parent group
         let destinationGroup;
-        if ("${parentGroupUuid || ""}") {
-          destinationGroup = theApp.getRecordWithUuid("${parentGroupUuid}");
+        if ("${escapeStringForJXA(parentGroupUuid)}") {
+          destinationGroup = theApp.getRecordWithUuid("${escapeStringForJXA(parentGroupUuid)}");
           if (!destinationGroup) {
-            throw new Error("Parent group with UUID not found: ${parentGroupUuid}");
+            throw new Error("Parent group with UUID not found: ${escapeStringForJXA(parentGroupUuid)}");
           }
         } else {
           destinationGroup = targetDatabase.incomingGroup();
         }
-        
+
         // Build options object
         const options = { in: destinationGroup };
-        
-        ${name ? `options.name = "${name}";` : ""}
+
+        ${name ? `options.name = "${escapeStringForJXA(name)}";` : ""}
         ${readability ? `options.readability = ${readability};` : ""}
-        ${userAgent ? `options.agent = "${userAgent}";` : ""}
-        ${referrer ? `options.referrer = "${referrer}";` : ""}
-        
+        ${userAgent ? `options.agent = "${escapeStringForJXA(userAgent)}";` : ""}
+        ${referrer ? `options.referrer = "${escapeStringForJXA(referrer)}";` : ""}
+
         // Add PDF-specific options if provided
         ${
 					pdfOptions && format === "pdf"
@@ -128,27 +129,27 @@ const createFromUrl = async (
         `
 						: ""
 				}
-        
+
         let newRecord;
-        
+
         // Create record based on format
-        switch ("${format}") {
+        switch ("${escapeStringForJXA(format)}") {
           case "formatted_note":
-            newRecord = theApp.createFormattedNoteFrom("${url}", options);
+            newRecord = theApp.createFormattedNoteFrom("${escapeStringForJXA(url)}", options);
             break;
           case "markdown":
-            newRecord = theApp.createMarkdownFrom("${url}", options);
+            newRecord = theApp.createMarkdownFrom("${escapeStringForJXA(url)}", options);
             break;
           case "pdf":
-            newRecord = theApp.createPDFDocumentFrom("${url}", options);
+            newRecord = theApp.createPDFDocumentFrom("${escapeStringForJXA(url)}", options);
             break;
           case "web_document":
-            newRecord = theApp.createWebDocumentFrom("${url}", options);
+            newRecord = theApp.createWebDocumentFrom("${escapeStringForJXA(url)}", options);
             break;
           default:
             return JSON.stringify({
               success: false,
-              error: "Invalid format: ${format}"
+              error: "Invalid format: ${escapeStringForJXA(format)}"
             });
         }
         

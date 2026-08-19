@@ -1,7 +1,8 @@
+import { type Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
+import { escapeStringForJXA } from "../utils/escapeString.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -51,14 +52,14 @@ const createRecord = async (
     (() => {
       const theApp = Application("DEVONthink");
       theApp.includeStandardAdditions = true;
-      
+
       try {
         let targetDatabase;
-        if ("${databaseName || ""}") {
+        if ("${escapeStringForJXA(databaseName)}") {
           const databases = theApp.databases();
-          targetDatabase = databases.find(db => db.name() === "${databaseName}");
+          targetDatabase = databases.find(db => db.name() === "${escapeStringForJXA(databaseName)}");
           if (!targetDatabase) {
-            throw new Error("Database not found: ${databaseName}");
+            throw new Error("Database not found: ${escapeStringForJXA(databaseName)}");
           }
         } else {
           targetDatabase = theApp.currentDatabase();
@@ -66,26 +67,26 @@ const createRecord = async (
 
         // Get the parent group
         let destinationGroup;
-        if ("${parentGroupUuid || ""}") {
-          destinationGroup = theApp.getRecordWithUuid("${parentGroupUuid}");
+        if ("${escapeStringForJXA(parentGroupUuid)}") {
+          destinationGroup = theApp.getRecordWithUuid("${escapeStringForJXA(parentGroupUuid)}");
           if (!destinationGroup) {
-            throw new Error("Parent group with UUID not found: ${parentGroupUuid}");
+            throw new Error("Parent group with UUID not found: ${escapeStringForJXA(parentGroupUuid)}");
           }
         } else {
           destinationGroup = targetDatabase.incomingGroup();
         }
-        
+
         // Create the record properties
         const recordProps = {
-          name: "${name}",
-          type: "${type}"
+          name: "${escapeStringForJXA(name)}",
+          type: "${escapeStringForJXA(type)}"
         };
-        
+
         // Add content if provided
-        ${content ? `recordProps.content = \`${content.replace(/`/g, "\\`")}\`;` : ""}
-        
+        ${content ? `recordProps.content = "${escapeStringForJXA(content)}";` : ""}
+
         // Add URL if provided
-        ${url ? `recordProps.URL = "${url}";` : ""}
+        ${url ? `recordProps.URL = "${escapeStringForJXA(url)}";` : ""}
         
         // Create the record
         const newRecord = theApp.createRecordWith(recordProps, { in: destinationGroup });

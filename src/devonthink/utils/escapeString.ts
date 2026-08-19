@@ -10,9 +10,12 @@ export function escapeStringForJXA(input: string | undefined | null): string {
 	// First, handle backslashes (must be done first to avoid double-escaping)
 	let escaped = input.replace(/\\/g, "\\\\");
 
-	// Then handle quotes
+	// Then handle quotes and backticks. Backticks and ${ must be neutralized so
+	// the value is safe inside both "double", 'single', and `template` literals.
 	escaped = escaped.replace(/"/g, '\\"');
 	escaped = escaped.replace(/'/g, "\\'");
+	escaped = escaped.replace(/`/g, "\\`");
+	escaped = escaped.replace(/\$\{/g, "\\${");
 
 	// Handle newlines, tabs, and other control characters
 	escaped = escaped

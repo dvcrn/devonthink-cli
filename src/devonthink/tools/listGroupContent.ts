@@ -1,7 +1,8 @@
+import { type Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
+import { escapeStringForJXA } from "../utils/escapeString.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -42,11 +43,11 @@ const listGroupContent = async (
 
 	const getDatabaseJxa = `
     let targetDatabase;
-    if ("${databaseName || ""}") {
+    if ("${escapeStringForJXA(databaseName)}") {
       const databases = theApp.databases();
-      targetDatabase = databases.find(db => db.name() === "${databaseName}");
+      targetDatabase = databases.find(db => db.name() === "${escapeStringForJXA(databaseName)}");
       if (!targetDatabase) {
-        throw new Error("Database not found: ${databaseName}");
+        throw new Error("Database not found: ${escapeStringForJXA(databaseName)}");
       }
     } else {
       targetDatabase = theApp.currentDatabase();
@@ -55,7 +56,7 @@ const listGroupContent = async (
 
 	const getGroupJxa =
 		uuid && uuid !== "/"
-			? `const group = theApp.getRecordWithUuid("${uuid}");`
+			? `const group = theApp.getRecordWithUuid("${escapeStringForJXA(uuid)}");`
 			: `const group = targetDatabase.root();`;
 
 	const script = `

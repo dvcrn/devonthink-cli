@@ -1,7 +1,8 @@
+import { type Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { Tool, ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { executeJxa } from "../applescript/execute.js";
+import { escapeStringForJXA } from "../utils/escapeString.js";
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
 type ToolInput = z.infer<typeof ToolInputSchema>;
@@ -72,34 +73,34 @@ const lookupRecord = async (
       
       try {
         let searchDatabase;
-        
+
         // Determine search database
-        if ("${databaseName || ""}") {
+        if ("${escapeStringForJXA(databaseName)}") {
           const databases = theApp.databases();
-          searchDatabase = databases.find(db => db.name() === "${databaseName}");
+          searchDatabase = databases.find(db => db.name() === "${escapeStringForJXA(databaseName)}");
           if (!searchDatabase) {
             return JSON.stringify({
               success: false,
-              error: "Database not found: ${databaseName}"
+              error: "Database not found: ${escapeStringForJXA(databaseName)}"
             });
           }
         } else {
           searchDatabase = theApp.currentDatabase();
         }
-        
+
         let searchResults;
         const searchOptions = { in: searchDatabase };
-        
+
         // Perform the appropriate lookup
-        switch ("${lookupType}") {
+        switch ("${escapeStringForJXA(lookupType)}") {
           case "filename":
-            searchResults = theApp.lookupRecordsWithFile("${value}", { in: searchDatabase });
+            searchResults = theApp.lookupRecordsWithFile("${escapeStringForJXA(value)}", { in: searchDatabase });
             break;
           case "path":
-            searchResults = theApp.lookupRecordsWithPath("${value}", { in: searchDatabase });
+            searchResults = theApp.lookupRecordsWithPath("${escapeStringForJXA(value)}", { in: searchDatabase });
             break;
           case "url": {
-            const urlValue = "${value}";
+            const urlValue = "${escapeStringForJXA(value)}";
             const dtPrefix = "x-devonthink-item://";
             if (urlValue.startsWith(dtPrefix)) {
               const identifier = decodeURIComponent(urlValue.substring(dtPrefix.length));
@@ -115,18 +116,18 @@ const lookupRecord = async (
             break;
           }
           case "comment":
-            searchResults = theApp.lookupRecordsWithComment("${value}", { in: searchDatabase });
+            searchResults = theApp.lookupRecordsWithComment("${escapeStringForJXA(value)}", { in: searchDatabase });
             break;
           case "contentHash":
-            searchResults = theApp.lookupRecordsWithContentHash("${value}", { in: searchDatabase });
+            searchResults = theApp.lookupRecordsWithContentHash("${escapeStringForJXA(value)}", { in: searchDatabase });
             break;
           case "tags":
             const tagArray = ${tags ? JSON.stringify(tags) : "[]"};
-            if (tagArray.length === 0 && "${value}") {
-              tagArray.push("${value}");
+            if (tagArray.length === 0 && "${escapeStringForJXA(value)}") {
+              tagArray.push("${escapeStringForJXA(value)}");
             }
             const tagOptions = { in: searchDatabase };
-            if (${matchAnyTag}) {
+            if (${matchAnyTag ? "true" : "false"}) {
               tagOptions.any = true;
             }
             searchResults = theApp.lookupRecordsWithTags(tagArray, tagOptions);
@@ -134,7 +135,7 @@ const lookupRecord = async (
           default:
             return JSON.stringify({
               success: false,
-              error: "Invalid lookup type: ${lookupType}"
+              error: "Invalid lookup type: ${escapeStringForJXA(lookupType)}"
             });
         }
         
